@@ -7,9 +7,7 @@ let count_j = 0;
 let count_i_hollow = 0;
 let count_j_hollow = 0;
 let currentColumnMain = [];
-let currentColumnHollow = [];
-let currentColumnCompact = [];
-let currentColumnRain = [];
+let previousColumnMain = [];
 // console.log(tbodyDairo);
 function drawTablePlay(idElement, trQuantity, tdQuantity, nameTable) {
     for (let i = 0; i < trQuantity; i++) {
@@ -33,7 +31,7 @@ drawTablePlay(tbodyRain, 6, 95, 'rain');
 
 
 $('#banker').on('click', (e) => {
-    addPointToHollowTable(count_i, count_j);
+   
 
     let previous_i = count_i;
     if (count_i != 0) {
@@ -50,19 +48,22 @@ $('#banker').on('click', (e) => {
         count_i++;
     }
 
-    if (currentColumnMain.includes('player')) {
+    if (checkListMain(currentColumnMain, 'player')) {
+        previousColumnMain = currentColumnMain;
+        console.log('previous: ' + previousColumnMain);
+        console.log(previousColumnMain);
         currentColumnMain = [];
-        currentColumnMain.push(`banker_${count_i}_${count_j}`);
+        currentColumnMain.push(`banker ${count_i} ${count_j}`);
 
     } else {
-        currentColumnMain.push(`banker_${count_i}_${count_j}`);
+        currentColumnMain.push(`banker ${count_i} ${count_j}`);
     }
-    console.log(currentColumnMain);
+    addPointToHollowTable(count_i, count_j);
+    console.log('current: ' + currentColumnMain);
 });
 
 $('#player').on('click', (e) => {
     // console.log($('#player'));
-    addPointToHollowTable(count_i, count_j);
 
     let previous_i = count_i;
     if (count_i != 0) {
@@ -78,14 +79,18 @@ $('#player').on('click', (e) => {
         addPointToMainTable(count_i, count_j, 'playerHollow', 'player');
         count_i++;
     }
-    if (currentColumnMain.includes('banker')) {
+    if (checkListMain(currentColumnMain, 'banker')) {
+        previousColumnMain = currentColumnMain;
+        console.log('previous: ' + previousColumnMain);
+        console.log(previousColumnMain);
         currentColumnMain = [];
-        currentColumnMain.push(`player_${count_i}_${count_j}`);
-
+        currentColumnMain.push(`player ${count_i} ${count_j}`);
     } else {
-        currentColumnMain.push(`player_${count_i}_${count_j}`);
+        currentColumnMain.push(`player ${count_i} ${count_j}`);
     }
-    console.log(currentColumnMain);
+    addPointToHollowTable(count_i, count_j);
+
+    console.log('current: ' + currentColumnMain);
 
 });
 
@@ -106,8 +111,9 @@ $('#tie').on('click', (e) => {
 
 });
 
+// HOLLOW
 function addPointToHollowTable(count_i, count_j) {
-    console.log(count_i + '' + count_j);
+    // console.log(count_i + '' + count_j);
     if (count_j == 0) {
         return;
     }
@@ -115,13 +121,26 @@ function addPointToHollowTable(count_i, count_j) {
     if (count_j == 1 && count_i == 0) {
         return;
     }
-
-    let td = document.querySelector(`#tr${count_i_hollow}td${count_j_hollow}_hollow`);
-    td.innerHTML = `<div class="pointTiny">
+    console.log('previous: ' + previousColumnMain.length);
+    console.log('current: ' + currentColumnMain.length);
+    // console.log(typeof previousColumnMain.length);
+    if (previousColumnMain.length > currentColumnMain.length && previousColumnMain.length - currentColumnMain.length == 1) {
+        let td = document.querySelector(`#tr${count_i_hollow}td${count_j_hollow}_hollow`);
+        td.innerHTML = `<div class="pointTiny">
+                    <span class="dotHollow playerHollow"></span>
+                    </div>`;
+        count_i_hollow++;
+        td.style.padding = 0;
+    } else if (previousColumnMain.length >= currentColumnMain.length) {
+        let td = document.querySelector(`#tr${count_i_hollow}td${count_j_hollow}_hollow`);
+        td.innerHTML = `<div class="pointTiny">
                     <span class="dotHollow bankerHollow"></span>
                     </div>`;
-    count_i_hollow++;
-    td.style.padding = 0;
+        count_i_hollow++;
+        td.style.padding = 0;
+    }
+
+
 }
 
 function addPointToMainTable(count_i, count_j, stringPoint, stringPlay) {
@@ -132,4 +151,14 @@ function addPointToMainTable(count_i, count_j, stringPoint, stringPlay) {
     td.classList.add(stringPlay);
     td.style.padding = 0;
 
+}
+
+function checkListMain(list, string) {
+    for (let i = 0; i < list.length; i++) {
+        if (list[i].includes(string)) {
+            return true;
+        }
+    }
+
+    return false;
 }
