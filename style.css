@@ -17,7 +17,7 @@
     /* border-style: solid; */
 }
 
-.dotHollow {
+.dotTiny {
     height: 15px;
     width: 15px;
     border-radius: 50%;
@@ -26,9 +26,7 @@
     border-style: solid;
 }
 
-.dot :hover {
-    opacity: 0.7;
-}
+
 
 .banker {
     background-color: red;
@@ -58,6 +56,14 @@
 .tieHollow {
     background-color: white;
     border-color: green;
+}
+
+.bankerCompact {
+    background-color: red;
+}
+
+.playerCompact {
+    background-color: blue;
 }
 
 .center {

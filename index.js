@@ -6,8 +6,11 @@ let count_i = 0;
 let count_j = 0;
 let count_i_hollow = 0;
 let count_j_hollow = 0;
+let count_i_compact = 0;
+let count_j_compact = 0;
 let currentColumnMain = [];
 let previousColumnMain = [];
+let doublePreviousColumnMain = [];
 // console.log(tbodyDairo);
 function drawTablePlay(idElement, trQuantity, tdQuantity, nameTable) {
     for (let i = 0; i < trQuantity; i++) {
@@ -31,7 +34,7 @@ drawTablePlay(tbodyRain, 6, 95, 'rain');
 
 
 $('#banker').on('click', (e) => {
-   
+
 
     let previous_i = count_i;
     if (count_i != 0) {
@@ -49,8 +52,11 @@ $('#banker').on('click', (e) => {
     }
 
     if (checkListMain(currentColumnMain, 'player')) {
+        doublePreviousColumnMain = previousColumnMain;
         previousColumnMain = currentColumnMain;
-        console.log('previous: ' + previousColumnMain);
+        console.log('double previous: ');
+        console.log(doublePreviousColumnMain);
+        console.log('previous: ');
         console.log(previousColumnMain);
         currentColumnMain = [];
         currentColumnMain.push(`banker ${count_i} ${count_j}`);
@@ -58,8 +64,9 @@ $('#banker').on('click', (e) => {
     } else {
         currentColumnMain.push(`banker ${count_i} ${count_j}`);
     }
-    addPointToHollowTable(count_i, count_j);
-    console.log('current: ' + currentColumnMain);
+    handleHollowTable(count_i, count_j);
+    handleCompactTable(count_i, count_j);
+    // console.log('current: ' + currentColumnMain);
 });
 
 $('#player').on('click', (e) => {
@@ -80,17 +87,20 @@ $('#player').on('click', (e) => {
         count_i++;
     }
     if (checkListMain(currentColumnMain, 'banker')) {
+        doublePreviousColumnMain = previousColumnMain;
         previousColumnMain = currentColumnMain;
-        console.log('previous: ' + previousColumnMain);
+        console.log('double previous: ');
+        console.log(doublePreviousColumnMain);
+        console.log('previous: ');
         console.log(previousColumnMain);
         currentColumnMain = [];
         currentColumnMain.push(`player ${count_i} ${count_j}`);
     } else {
         currentColumnMain.push(`player ${count_i} ${count_j}`);
     }
-    addPointToHollowTable(count_i, count_j);
-
-    console.log('current: ' + currentColumnMain);
+    handleHollowTable(count_i, count_j);
+    handleCompactTable(count_i, count_j)
+    // console.log('current: ' + currentColumnMain);
 
 });
 
@@ -100,7 +110,7 @@ $('#tie').on('click', (e) => {
         previous_i = count_i - 1;
     }
     let previousTd = document.querySelector(`#tr${previous_i}td${count_j}_main`);
-    if (previousTd.classList.contains('banker')) {
+    if (previousTd.classList.contains('banker') || previousTd.classList.contains('tieBanker')) {
         addPointToMainTable(count_i, count_j, 'tieHollow', 'tieBanker');
         count_i++;
     } else {
@@ -112,45 +122,78 @@ $('#tie').on('click', (e) => {
 });
 
 // HOLLOW
-function addPointToHollowTable(count_i, count_j) {
-    // console.log(count_i + '' + count_j);
+function handleHollowTable(count_i, count_j) {
+
     if (count_j == 0) {
         return;
     }
 
-    if (count_j == 1 && count_i == 0) {
+    if (count_j == 1 && count_i == 1) {
         return;
     }
-    console.log('previous: ' + previousColumnMain.length);
-    console.log('current: ' + currentColumnMain.length);
-    // console.log(typeof previousColumnMain.length);
-    if (previousColumnMain.length > currentColumnMain.length && previousColumnMain.length - currentColumnMain.length == 1) {
-        let td = document.querySelector(`#tr${count_i_hollow}td${count_j_hollow}_hollow`);
-        td.innerHTML = `<div class="pointTiny">
-                    <span class="dotHollow playerHollow"></span>
-                    </div>`;
-        count_i_hollow++;
-        td.style.padding = 0;
-    } else if (previousColumnMain.length >= currentColumnMain.length) {
-        let td = document.querySelector(`#tr${count_i_hollow}td${count_j_hollow}_hollow`);
-        td.innerHTML = `<div class="pointTiny">
-                    <span class="dotHollow bankerHollow"></span>
-                    </div>`;
-        count_i_hollow++;
-        td.style.padding = 0;
-    }
+    if (currentColumnMain.length == 1) {
+        let previous_i_hollow = count_i_hollow;
+        if (count_i_hollow != 0) {
+            previous_i_hollow = count_i_hollow - 1;
+        }
+        let previousTd = document.querySelector(`#tr${previous_i_hollow}td${count_j_hollow}_hollow`);
+        handleAddPointToHollowTable(previousTd, 'playerHollow', 'banker', 'player');
 
+    } else if (previousColumnMain.length >= currentColumnMain.length) {
+        let previous_i_hollow = count_i_hollow;
+        if (count_i_hollow != 0) {
+            previous_i_hollow = count_i_hollow - 1;
+        }
+        let previousTd = document.querySelector(`#tr${previous_i_hollow}td${count_j_hollow}_hollow`);
+        handleAddPointToHollowTable(previousTd, 'bankerHollow', 'player', 'banker');
+    } else if (currentColumnMain.length > previousColumnMain.length && currentColumnMain.length - previousColumnMain.length == 1) {
+        let previous_i_hollow = count_i_hollow;
+        if (count_i_hollow != 0) {
+            previous_i_hollow = count_i_hollow - 1;
+        }
+        let previousTd = document.querySelector(`#tr${previous_i_hollow}td${count_j_hollow}_hollow`);
+        handleAddPointToHollowTable(previousTd, 'playerHollow', 'banker', 'player');
+    } else {
+        let previous_i_hollow = count_i_hollow;
+        if (count_i_hollow != 0) {
+            previous_i_hollow = count_i_hollow - 1;
+        }
+        let previousTd = document.querySelector(`#tr${previous_i_hollow}td${count_j_hollow}_hollow`);
+        handleAddPointToHollowTable(previousTd, 'bankerHollow', 'player', 'banker');
+    }
 
 }
 
 function addPointToMainTable(count_i, count_j, stringPoint, stringPlay) {
     let td = document.querySelector(`#tr${count_i}td${count_j}_main`);
     td.innerHTML = `<div class="pointTiny">
-                <span class="dotHollow ${stringPoint}"></span>
+                <span class="dotTiny ${stringPoint}"></span>
                 </div>`;
     td.classList.add(stringPlay);
     td.style.padding = 0;
 
+}
+
+function addPointToHollowTable(count_i_hollow, count_j_hollow, stringPoint, stringPlay) {
+    let td = document.querySelector(`#tr${count_i_hollow}td${count_j_hollow}_hollow`);
+    td.innerHTML = `<div class="pointTiny">
+                    <span class="dotTiny ${stringPoint}"></span>
+                    </div>`;
+    td.classList.add(stringPlay);
+    td.style.padding = 0;
+
+}
+
+function handleAddPointToHollowTable(previousTd, stringPoint, checkStringPlay, stringPlay) {
+    if (previousTd.classList.contains(checkStringPlay)) {
+        count_i_hollow = 0;
+        count_j_hollow += 1;
+        addPointToHollowTable(count_i_hollow, count_j_hollow, stringPoint, stringPlay);
+        count_i_hollow++;
+    } else {
+        addPointToHollowTable(count_i_hollow, count_j_hollow, stringPoint, stringPlay);
+        count_i_hollow++;
+    }
 }
 
 function checkListMain(list, string) {
@@ -159,6 +202,70 @@ function checkListMain(list, string) {
             return true;
         }
     }
-
     return false;
+}
+
+//COMPACT
+
+function handleCompactTable(count_i, count_j) {
+    if (count_j <= 1) {
+        return;
+    }
+
+    if (count_j <= 2 && count_i <= 2) {
+        return;
+    }
+    if (currentColumnMain.length == 1) {
+        let previous_i_compact = count_i_compact;
+        if (count_i_compact != 0) {
+            previous_i_compact = count_i_compact - 1;
+        }
+        let previousTd = document.querySelector(`#tr${previous_i_compact}td${count_j_compact}_compact`);
+        handleAddPointToCompactTable(previousTd, 'playerCompact', 'banker', 'player');
+
+    } else if (doublePreviousColumnMain.length >= currentColumnMain.length) {
+        let previous_i_compact = count_i_compact;
+        if (count_i_compact != 0) {
+            previous_i_compact = count_i_compact - 1;
+        }
+        let previousTd = document.querySelector(`#tr${previous_i_compact}td${count_j_compact}_compact`);
+        handleAddPointToCompactTable(previousTd, 'bankerCompact', 'player', 'banker');
+    } else if (currentColumnMain.length > doublePreviousColumnMain.length && currentColumnMain.length - doublePreviousColumnMain.length == 1) {
+        let previous_i_compact = count_i_compact;
+        if (count_i_compact != 0) {
+            previous_i_compact = count_i_compact - 1;
+        }
+        let previousTd = document.querySelector(`#tr${previous_i_compact}td${count_j_compact}_compact`);
+        handleAddPointToCompactTable(previousTd, 'playerCompact', 'banker', 'player');
+    } else {
+        let previous_i_compact = count_i_compact;
+        if (count_i_compact != 0) {
+            previous_i_compact = count_i_compact - 1;
+        }
+        let previousTd = document.querySelector(`#tr${previous_i_compact}td${count_j_compact}_compact`);
+        handleAddPointToCompactTable(previousTd, 'bankerCompact', 'player', 'banker');
+    }
+
+}
+
+function addPointToCompactTable(count_i_compact, count_j_compact, stringPoint, stringPlay) {
+    let td = document.querySelector(`#tr${count_i_compact}td${count_j_compact}_compact`);
+    td.innerHTML = `<div class="pointTiny">
+                    <span class="dotTiny ${stringPoint}"></span>
+                    </div>`;
+    td.classList.add(stringPlay);
+    td.style.padding = 0;
+
+}
+
+function handleAddPointToCompactTable(previousTd, stringPoint, checkStringPlay, stringPlay) {
+    if (previousTd.classList.contains(checkStringPlay)) {
+        count_i_compact = 0;
+        count_j_compact += 1;
+        addPointToCompactTable(count_i_compact, count_j_compact, stringPoint, stringPlay);
+        count_i_compact++;
+    } else {
+        addPointToCompactTable(count_i_compact, count_j_compact, stringPoint, stringPlay);
+        count_i_compact++;
+    }
 }
