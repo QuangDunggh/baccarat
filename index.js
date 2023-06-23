@@ -8,9 +8,13 @@ let count_i_hollow = 0;
 let count_j_hollow = 0;
 let count_i_compact = 0;
 let count_j_compact = 0;
+let count_i_rain = 0;
+let count_j_rain = 0;
 let currentColumnMain = [];
 let previousColumnMain = [];
 let doublePreviousColumnMain = [];
+let triplePreviousColumnMain = [];
+let quadaPreviousColumnMain = [];
 // console.log(tbodyDairo);
 function drawTablePlay(idElement, trQuantity, tdQuantity, nameTable) {
     for (let i = 0; i < trQuantity; i++) {
@@ -27,10 +31,10 @@ function drawTablePlay(idElement, trQuantity, tdQuantity, nameTable) {
     }
 }
 // console.log($('#tbl-dairo'));
-drawTablePlay(tbodyDairo, 10, 120, 'main');
-drawTablePlay(tbodyHollow, 6, 95, 'hollow');
-drawTablePlay(tbodyCompact, 6, 95, 'compact');
-drawTablePlay(tbodyRain, 6, 95, 'rain');
+drawTablePlay(tbodyDairo, 12, 120, 'main');
+drawTablePlay(tbodyHollow, 12, 95, 'hollow');
+drawTablePlay(tbodyCompact, 12, 95, 'compact');
+drawTablePlay(tbodyRain, 12, 95, 'rain');
 
 
 $('#banker').on('click', (e) => {
@@ -52,6 +56,8 @@ $('#banker').on('click', (e) => {
     }
 
     if (checkListMain(currentColumnMain, 'player')) {
+        quadaPreviousColumnMain = triplePreviousColumnMain;
+        triplePreviousColumnMain = doublePreviousColumnMain;
         doublePreviousColumnMain = previousColumnMain;
         previousColumnMain = currentColumnMain;
         console.log('double previous: ');
@@ -66,6 +72,7 @@ $('#banker').on('click', (e) => {
     }
     handleHollowTable(count_i, count_j);
     handleCompactTable(count_i, count_j);
+    handleRainTable(count_i, count_j);
     // console.log('current: ' + currentColumnMain);
 });
 
@@ -87,6 +94,8 @@ $('#player').on('click', (e) => {
         count_i++;
     }
     if (checkListMain(currentColumnMain, 'banker')) {
+        quadaPreviousColumnMain = triplePreviousColumnMain;
+        triplePreviousColumnMain = doublePreviousColumnMain;
         doublePreviousColumnMain = previousColumnMain;
         previousColumnMain = currentColumnMain;
         console.log('double previous: ');
@@ -99,7 +108,8 @@ $('#player').on('click', (e) => {
         currentColumnMain.push(`player ${count_i} ${count_j}`);
     }
     handleHollowTable(count_i, count_j);
-    handleCompactTable(count_i, count_j)
+    handleCompactTable(count_i, count_j);
+    handleRainTable(count_i, count_j);
     // console.log('current: ' + currentColumnMain);
 
 });
@@ -132,13 +142,21 @@ function handleHollowTable(count_i, count_j) {
         return;
     }
     if (currentColumnMain.length == 1) {
-        let previous_i_hollow = count_i_hollow;
-        if (count_i_hollow != 0) {
-            previous_i_hollow = count_i_hollow - 1;
+        if (previousColumnMain.length == doublePreviousColumnMain.length) {
+            let previous_i_hollow = count_i_hollow;
+            if (count_i_hollow != 0) {
+                previous_i_hollow = count_i_hollow - 1;
+            }
+            let previousTd = document.querySelector(`#tr${previous_i_hollow}td${count_j_hollow}_hollow`);
+            handleAddPointToHollowTable(previousTd, 'bankerHollow', 'player', 'banker');
+        } else {
+            let previous_i_hollow = count_i_hollow;
+            if (count_i_hollow != 0) {
+                previous_i_hollow = count_i_hollow - 1;
+            }
+            let previousTd = document.querySelector(`#tr${previous_i_hollow}td${count_j_hollow}_hollow`);
+            handleAddPointToHollowTable(previousTd, 'playerHollow', 'banker', 'player');
         }
-        let previousTd = document.querySelector(`#tr${previous_i_hollow}td${count_j_hollow}_hollow`);
-        handleAddPointToHollowTable(previousTd, 'playerHollow', 'banker', 'player');
-
     } else if (previousColumnMain.length >= currentColumnMain.length) {
         let previous_i_hollow = count_i_hollow;
         if (count_i_hollow != 0) {
@@ -146,7 +164,7 @@ function handleHollowTable(count_i, count_j) {
         }
         let previousTd = document.querySelector(`#tr${previous_i_hollow}td${count_j_hollow}_hollow`);
         handleAddPointToHollowTable(previousTd, 'bankerHollow', 'player', 'banker');
-    } else if (currentColumnMain.length > previousColumnMain.length && currentColumnMain.length - previousColumnMain.length == 1) {
+    } else if (currentColumnMain.length - previousColumnMain.length == 1) {
         let previous_i_hollow = count_i_hollow;
         if (count_i_hollow != 0) {
             previous_i_hollow = count_i_hollow - 1;
@@ -212,16 +230,26 @@ function handleCompactTable(count_i, count_j) {
         return;
     }
 
-    if (count_j <= 2 && count_i <= 2) {
+    if (count_j <= 2 && count_i <= 1) {
         return;
     }
     if (currentColumnMain.length == 1) {
-        let previous_i_compact = count_i_compact;
-        if (count_i_compact != 0) {
-            previous_i_compact = count_i_compact - 1;
+        if (previousColumnMain.length == triplePreviousColumnMain.length) {
+            let previous_i_compact = count_i_compact;
+            if (count_i_compact != 0) {
+                previous_i_compact = count_i_compact - 1;
+            }
+            let previousTd = document.querySelector(`#tr${previous_i_compact}td${count_j_compact}_compact`);
+            handleAddPointToCompactTable(previousTd, 'bankerCompact', 'player', 'banker');
+        } else {
+            let previous_i_compact = count_i_compact;
+            if (count_i_compact != 0) {
+                previous_i_compact = count_i_compact - 1;
+            }
+            let previousTd = document.querySelector(`#tr${previous_i_compact}td${count_j_compact}_compact`);
+            handleAddPointToCompactTable(previousTd, 'playerCompact', 'banker', 'player');
         }
-        let previousTd = document.querySelector(`#tr${previous_i_compact}td${count_j_compact}_compact`);
-        handleAddPointToCompactTable(previousTd, 'playerCompact', 'banker', 'player');
+
 
     } else if (doublePreviousColumnMain.length >= currentColumnMain.length) {
         let previous_i_compact = count_i_compact;
@@ -267,5 +295,77 @@ function handleAddPointToCompactTable(previousTd, stringPoint, checkStringPlay, 
     } else {
         addPointToCompactTable(count_i_compact, count_j_compact, stringPoint, stringPlay);
         count_i_compact++;
+    }
+}
+
+//Rain
+
+function handleRainTable(count_i, count_j) {
+    if (count_j <= 2) {
+        return;
+    }
+    if (count_j <= 3 && count_i <= 1) {
+        return;
+    }
+    if (currentColumnMain.length == 1) {
+        if (previousColumnMain.length == quadaPreviousColumnMain.length) {
+            let previous_i_rain = count_i_rain;
+            if (count_i_rain != 0) {
+                previous_i_rain = count_i_rain - 1;
+            }
+            let previousTd = document.querySelector(`#tr${previous_i_rain}td${count_j_rain}_rain`);
+            handleAddPointToRainTable(previousTd, 'playerRain', 'banker', 'player');
+        } else {
+            let previous_i_rain = count_i_rain;
+            if (count_i_rain != 0) {
+                previous_i_rain = count_i_rain - 1;
+            }
+            let previousTd = document.querySelector(`#tr${previous_i_rain}td${count_j_rain}_rain`);
+            handleAddPointToRainTable(previousTd, 'playerRain', 'banker', 'player');
+        }
+    } else if (triplePreviousColumnMain.length >= currentColumnMain.length) {
+        let previous_i_rain = count_i_rain;
+        if (count_i_rain != 0) {
+            previous_i_rain = count_i_rain - 1;
+        }
+        let previousTd = document.querySelector(`#tr${previous_i_rain}td${count_j_rain}_rain`);
+        handleAddPointToRainTable(previousTd, 'bankerRain', 'player', 'banker');
+    } else if (currentColumnMain.length > triplePreviousColumnMain.length && currentColumnMain.length - triplePreviousColumnMain.length == 1) {
+        let previous_i_rain = count_i_rain;
+        if (count_i_rain != 0) {
+            previous_i_rain = count_i_rain - 1;
+        }
+        let previousTd = document.querySelector(`#tr${previous_i_rain}td${count_j_rain}_rain`);
+        handleAddPointToRainTable(previousTd, 'playerRain', 'banker', 'player');
+    } else {
+        let previous_i_rain = count_i_rain;
+        if (count_i_rain != 0) {
+            previous_i_rain = count_i_rain - 1;
+        }
+        let previousTd = document.querySelector(`#tr${previous_i_rain}td${count_j_rain}_rain`);
+        handleAddPointToRainTable(previousTd, 'bankerRain', 'player', 'banker');
+    }
+
+}
+
+function addPointToRainTable(count_i_rain, count_j_rain, stringPoint, stringPlay) {
+    let td = document.querySelector(`#tr${count_i_rain}td${count_j_rain}_rain`);
+    td.innerHTML = `<div class="pointTiny">
+                    <span class="${stringPoint}">/</span>
+                    </div>`;
+    td.classList.add(stringPlay);
+    td.style.padding = 0;
+
+}
+
+function handleAddPointToRainTable(previousTd, stringPoint, checkStringPlay, stringPlay) {
+    if (previousTd.classList.contains(checkStringPlay)) {
+        count_i_rain = 0;
+        count_j_rain += 1;
+        addPointToRainTable(count_i_rain, count_j_rain, stringPoint, stringPlay);
+        count_i_rain++;
+    } else {
+        addPointToRainTable(count_i_rain, count_j_rain, stringPoint, stringPlay);
+        count_i_rain++;
     }
 }

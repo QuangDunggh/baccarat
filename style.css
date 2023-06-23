@@ -3,7 +3,7 @@
     background-color: rgb(132, 134, 136);
 }
 
- td {
+td {
     margin: 0;
     padding: 0;
 }
@@ -64,6 +64,14 @@
 
 .playerCompact {
     background-color: blue;
+}
+
+.bankerRain {
+    color: red;
+}
+
+.playerRain {
+    color: blue;
 }
 
 .center {
