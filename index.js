@@ -314,7 +314,7 @@ function handleRainTable(count_i, count_j) {
                 previous_i_rain = count_i_rain - 1;
             }
             let previousTd = document.querySelector(`#tr${previous_i_rain}td${count_j_rain}_rain`);
-            handleAddPointToRainTable(previousTd, 'playerRain', 'banker', 'player');
+            handleAddPointToRainTable(previousTd, 'bankerRain', 'player', 'banker');
         } else {
             let previous_i_rain = count_i_rain;
             if (count_i_rain != 0) {
