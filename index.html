@@ -18,12 +18,18 @@
 
 <body>
     <main>
-        <h1>Table dairo</h1>
+        <h1>Scoreboard baccarat</h1>
         <div class="content">
             <div class="col-12">
-                <div class="table-dairo">
+                <div hidden class="table-dairo">
                     <table class="table table-bordered border-primary">
                         <tbody id="tbl-dairo">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-dairo">
+                    <table class="table table-bordered border-primary">
+                        <tbody id="tbl-dairo-display">
                         </tbody>
                     </table>
                 </div>
@@ -31,7 +37,7 @@
             <div class="row">
                 <div class="col-6">
                     <div class="col-12">
-                        <div class="table-hollow" style=" 
+                        <div hidden class="table-hollow" style=" 
                         overflow: hidden;
                         overflow-x: scroll;">
                             <table class="table table-bordered border-primary">
@@ -39,10 +45,18 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div  class="table-hollow" style=" 
+                        overflow: hidden;
+                        overflow-x: scroll;">
+                            <table class="table table-bordered border-primary">
+                                <tbody id="tbl-hollow-display">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div class="col-12">
-                        <div class="table-compact" style=" 
+                        <div hidden class="table-compact" style=" 
                         overflow: hidden;
                         overflow-x: scroll;">
                             <table class="table table-bordered border-primary">
@@ -50,14 +64,30 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="table-compact" style=" 
+                        overflow: hidden;
+                        overflow-x: scroll;">
+                            <table class="table table-bordered border-primary">
+                                <tbody id="tbl-compact-display">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div class="col-12">
-                        <div class="table-rain" style=" 
+                        <div hidden class="table-rain" style=" 
                         overflow: hidden;
                         overflow-x: scroll;">
                             <table class="table table-bordered border-primary">
                                 <tbody id="tbl-rain">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-rain" style=" 
+                        overflow: hidden;
+                        overflow-x: scroll;">
+                            <table class="table table-bordered border-primary">
+                                <tbody id="tbl-rain-display">
                                 </tbody>
                             </table>
                         </div>
