@@ -18,6 +18,10 @@ let count_j_compact = 0;
 let count_i_rain = 0;
 let count_j_rain = 0;
 
+//
+let count_j_temp = count_j;
+
+//
 
 let currentColumnMain = [];
 let previousColumnMain = [];
@@ -43,10 +47,10 @@ function drawTablePlay(idElement, trQuantity, tdQuantity, nameTable) {
 }
 // console.log($('#tbl-dairo'));
 //draw table hidden
-drawTablePlay(tbodyDairo, 12, 120, 'main');
-drawTablePlay(tbodyHollow, 12, 95, 'hollow');
-drawTablePlay(tbodyCompact, 12, 95, 'compact');
-drawTablePlay(tbodyRain, 12, 95, 'rain');
+drawTablePlay(tbodyDairo, 6, 120, 'main');
+drawTablePlay(tbodyHollow, 6, 95, 'hollow');
+drawTablePlay(tbodyCompact, 6, 95, 'compact');
+drawTablePlay(tbodyRain, 6, 95, 'rain');
 
 // draw table display
 
@@ -54,36 +58,11 @@ drawTablePlay(tbodyRain, 12, 95, 'rain');
 
 $('#banker').on('click', (e) => {
     let previous_i = count_i;
+    let previous_j = count_j;
     if (count_i != 0) {
         previous_i = count_i - 1;
     }
     let previousTd = document.querySelector(`#tr${previous_i}td${count_j}_main`);
-
-    // Handle table display
-    // if (previousTdDisplay.classList.contains('player') || previousTdDisplay.classList.contains('tiePlayer')) {
-    //     count_i_display = 0;
-    //     count_j_display++;
-    //     addPointToTable(count_i_display, count_j_display, 'bankerHollow', 'banker', 'main_display');
-    //     count_i_display++;
-    // } else {
-    //     // console.log(count_i_display);
-    //     // console.log(count_j_display);
-    //     if (count_i_display == 5) {
-    //         console.log('vao day chua');
-            
-    //         addPointToTable(count_i_display, count_j_display, 'bankerHollow', 'banker', 'main_display');
-    //         count_i_display = 5;
-    //         count_j_display++;
-
-    //         // console.log(count_i_display);
-    //         // console.log(count_j_display);
-    //     } else {
-    //         addPointToTable(count_i_display, count_j_display, 'bankerHollow', 'banker', 'main_display');
-    //         if(count_i_display < 5) {
-    //             count_i_display++;
-    //         } 
-    //     }
-    // }
 
     // Handle table hidden
     if (previousTd.classList.contains('player') || previousTd.classList.contains('tiePlayer')) {
@@ -92,8 +71,15 @@ $('#banker').on('click', (e) => {
         addPointToTable(count_i, count_j, 'bankerHollow', 'banker', 'main');
         count_i++;
     } else {
-        addPointToTable(count_i, count_j, 'bankerHollow', 'banker', 'main');
-        count_i++;
+        if (count_i == 5) {
+            console.log('vao day');
+            count_i = 5;
+            addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
+            count_j_temp++;
+        } else {
+            addPointToTable(count_i, count_j, 'bankerHollow', 'banker', 'main');
+            count_i++;
+        }
     }
 
     if (checkListMain(currentColumnMain, 'player')) {
@@ -129,8 +115,15 @@ $('#player').on('click', (e) => {
         addPointToTable(count_i, count_j, 'playerHollow', 'player', 'main');
         count_i++;
     } else {
-        addPointToTable(count_i, count_j, 'playerHollow', 'player', 'main');
-        count_i++;
+        if (count_i == 5) {
+            console.log('vao day');
+            count_i = 5;
+            addPointToTable(count_i, count_j_temp, 'playerHollow', 'player', 'main');
+            count_j_temp++;
+        } else {
+            addPointToTable(count_i, count_j, 'playerHollow', 'player', 'main');
+            count_i++;
+        }
     }
     if (checkListMain(currentColumnMain, 'banker')) {
         quadaPreviousColumnMain = triplePreviousColumnMain;
@@ -150,17 +143,20 @@ $('#player').on('click', (e) => {
 });
 
 $('#tie').on('click', (e) => {
-    if(count_i == 0) {
-        addPointToTable(count_i, count_j, 'tieHollow', 'tieFirstRow', 'main');
-        count_i++;
-    }
+
     let previous_i = count_i;
     if (count_i != 0) {
         previous_i = count_i - 1;
     }
     let previousTd = document.querySelector(`#tr${previous_i}td${count_j}_main`);
     // Handle hidden table
-    if (previousTd.classList.contains('banker') || previousTd.classList.contains('tieBanker')) {
+    if (count_i == 0 && count_j == 0) {
+        addPointToTable(count_i, count_j, 'tieHollow', 'tieFirstRow', 'main');
+        count_i++;
+    } else if (previousTd.classList.contains('tieFirstRow')) {
+        addPointToTable(count_i, count_j, 'tieHollow', 'tieFirstRow', 'main');
+        count_i++;
+    } else if (previousTd.classList.contains('banker') || previousTd.classList.contains('tieBanker')) {
         addPointToTable(count_i, count_j, 'tieHollow', 'tieBanker', 'main');
         count_i++;
     } else {
@@ -171,6 +167,8 @@ $('#tie').on('click', (e) => {
 
 // Add point to table
 function addPointToTable(count_i, count_j, stringPoint, stringPlay, nameTable) {
+    console.log(count_i);
+    console.log(count_j);
     let td = document.querySelector(`#tr${count_i}td${count_j}_${nameTable}`);
     td.innerHTML = `<div class="pointTiny">
                 <span class="dotTiny ${stringPoint}"></span>
