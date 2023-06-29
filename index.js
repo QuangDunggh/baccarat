@@ -19,7 +19,7 @@ let count_i_rain = 0;
 let count_j_rain = 0;
 
 //
-let count_j_temp = count_j;
+let count_j_temp = 0;
 
 //
 
@@ -70,6 +70,7 @@ $('#banker').on('click', (e) => {
         count_j++;
         addPointToTable(count_i, count_j, 'bankerHollow', 'banker', 'main');
         count_i++;
+        count_j_temp++;
     } else {
         if (count_i == 5) {
             console.log('vao day');
@@ -114,6 +115,7 @@ $('#player').on('click', (e) => {
         count_j++;
         addPointToTable(count_i, count_j, 'playerHollow', 'player', 'main');
         count_i++;
+        count_j_temp++;
     } else {
         if (count_i == 5) {
             console.log('vao day');
