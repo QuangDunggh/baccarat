@@ -58,11 +58,20 @@ drawTablePlay(tbodyRain, 6, 95, 'rain');
 
 $('#banker').on('click', (e) => {
     let previous_i = count_i;
-    let previous_j = count_j;
+    let next_i = count_i + 1;
+    let next_double_i = count_i + 2;
     if (count_i != 0) {
         previous_i = count_i - 1;
     }
     let previousTd = document.querySelector(`#tr${previous_i}td${count_j}_main`);
+    let next_i_td;
+    let next_double_td;
+    if (next_i < 5) {
+        next_i_td = document.querySelector(`#tr${next_i}td${count_j}_main`);
+    }
+    if (next_double_i < 6) {
+        next_double_td = document.querySelector(`#tr${next_double_i}td${count_j}_main`);
+    }
 
     // Handle table hidden
     if (previousTd.classList.contains('player') || previousTd.classList.contains('tiePlayer')) {
@@ -70,10 +79,12 @@ $('#banker').on('click', (e) => {
         count_j++;
         addPointToTable(count_i, count_j, 'bankerHollow', 'banker', 'main');
         count_i++;
-        count_j_temp++;
+        count_j_temp = count_j;
     } else {
-        if (count_i == 5) {
-            console.log('vao day');
+        if (next_double_td.classList.contains('banker')) {
+            addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
+            count_j_temp++;
+        } else if (count_i == 5) {
             count_i = 5;
             addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
             count_j_temp++;
@@ -115,7 +126,7 @@ $('#player').on('click', (e) => {
         count_j++;
         addPointToTable(count_i, count_j, 'playerHollow', 'player', 'main');
         count_i++;
-        count_j_temp++;
+        count_j_temp = count_j;
     } else {
         if (count_i == 5) {
             console.log('vao day');
