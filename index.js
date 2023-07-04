@@ -81,10 +81,7 @@ $('#banker').on('click', (e) => {
         count_i++;
         count_j_temp = count_j;
     } else {
-        if (next_double_td.classList.contains('banker')) {
-            addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
-            count_j_temp++;
-        } else if (count_i == 5) {
+        if (count_i == 5) {
             count_i = 5;
             addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
             count_j_temp++;
@@ -402,4 +399,19 @@ function handleAddPointToRainTable(previousTd, stringPoint, checkStringPlay, str
         addPointToRainTable(count_i_rain, count_j_rain, stringPoint, stringPlay);
         count_i_rain++;
     }
+}
+
+// function check cell in table
+
+function checkNextCellTable(count_i, count_j, plus_count, nameTable, color) {
+
+    let next_i = count_i + plus_count;
+
+    let td = document.querySelector(`#tr${next_i}td${count_j}_${nameTable}`);
+    if (td != null) {
+
+        return true;
+    }
+
+    return false;
 }
