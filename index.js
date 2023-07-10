@@ -162,11 +162,11 @@ $('#tie').on('click', (e) => {
         addPointToTable(count_i, count_j, 'tieHollow', 'tieFirstRow', 'main');
         count_i++;
     } else if (previousTd.classList.contains('banker') || previousTd.classList.contains('tieBanker')) {
-        addPointToTable(count_i, count_j, 'tieHollow', 'tieBanker', 'main');
-        count_i++;
+        addPointToTable(previous_i, count_j, 'bankerHollow imgTie', 'tieBanker', 'main');
+
     } else {
-        addPointToTable(count_i, count_j, 'tieHollow', 'tiePlayer', 'main');
-        count_i++;
+        addPointToTable(previous_i, count_j, 'playerHollow imgTie', 'tiePlayer', 'main');
+
     }
 });
 
@@ -181,6 +181,8 @@ function addPointToTable(count_i, count_j, stringPoint, stringPlay, nameTable) {
     td.style.padding = 0;
 
 }
+
+
 
 // handle main table 
 
