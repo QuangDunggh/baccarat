@@ -8,7 +8,7 @@ let tbodyCompactDisplay = document.querySelector("#tbl-compact-display");
 let tbodyHollowDisplay = document.querySelector("#tbl-hollow-display");
 let tbodyRainDisplay = document.querySelector("#tbl-rain-display");
 
-// for table hidden
+// count for local table
 let count_i = 0;
 let count_j = 0;
 let count_i_hollow = 0;
@@ -20,6 +20,9 @@ let count_j_rain = 0;
 
 //
 let count_j_temp = 0;
+let count_j_temp_compact = 0;
+let count_j_temp_rain = 0;
+let count_j_temp_hollow = 0;
 
 //
 
@@ -58,22 +61,11 @@ drawTablePlay(tbodyRain, 6, 95, 'rain');
 
 $('#banker').on('click', (e) => {
     let previous_i = count_i;
-    let next_i = count_i + 1;
-    let next_double_i = count_i + 2;
     if (count_i != 0) {
         previous_i = count_i - 1;
     }
     let previousTd = document.querySelector(`#tr${previous_i}td${count_j}_main`);
-    let next_i_td;
-    let next_double_td;
-    if (next_i < 5) {
-        next_i_td = document.querySelector(`#tr${next_i}td${count_j}_main`);
-    }
-    if (next_double_i < 6) {
-        next_double_td = document.querySelector(`#tr${next_double_i}td${count_j}_main`);
-    }
 
-    // Handle table hidden
     if (previousTd.classList.contains('player') || previousTd.classList.contains('tiePlayer')) {
         count_i = 0;
         count_j++;
@@ -85,7 +77,12 @@ $('#banker').on('click', (e) => {
             count_i = 5;
             addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
             count_j_temp++;
-        } else {
+        }
+        // else if (!checkNextCellTable(count_i, count_j, 2, 'main', 'banker')) {
+        //     addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
+        //     count_j_temp++;
+        // }
+        else {
             addPointToTable(count_i, count_j, 'bankerHollow', 'banker', 'main');
             count_i++;
         }
@@ -117,7 +114,6 @@ $('#player').on('click', (e) => {
     }
     let previousTd = document.querySelector(`#tr${previous_i}td${count_j}_main`);
 
-    // Handle hidden table
     if (previousTd.classList.contains('banker') || previousTd.classList.contains('tieBanker')) {
         count_i = 0;
         count_j++;
@@ -126,7 +122,6 @@ $('#player').on('click', (e) => {
         count_j_temp = count_j;
     } else {
         if (count_i == 5) {
-            console.log('vao day');
             count_i = 5;
             addPointToTable(count_i, count_j_temp, 'playerHollow', 'player', 'main');
             count_j_temp++;
@@ -177,8 +172,7 @@ $('#tie').on('click', (e) => {
 
 // Add point to table
 function addPointToTable(count_i, count_j, stringPoint, stringPlay, nameTable) {
-    console.log(count_i);
-    console.log(count_j);
+
     let td = document.querySelector(`#tr${count_i}td${count_j}_${nameTable}`);
     td.innerHTML = `<div class="pointTiny">
                 <span class="dotTiny ${stringPoint}"></span>
@@ -248,9 +242,22 @@ function handleAddPointToHollowTable(previousTd, stringPoint, checkStringPlay, s
         count_j_hollow += 1;
         addPointToTable(count_i_hollow, count_j_hollow, stringPoint, stringPlay, 'hollow');
         count_i_hollow++;
+        count_j_temp_hollow = count_j_hollow;
     } else {
-        addPointToTable(count_i_hollow, count_j_hollow, stringPoint, stringPlay, 'hollow');
-        count_i_hollow++;
+        if (count_i_hollow == 5) {
+            count_i_hollow = 5;
+            addPointToTable(count_i_hollow, count_j_temp_hollow, stringPoint, stringPlay, 'hollow');
+            count_j_temp_hollow++;
+        }
+        // else if (!checkNextCellTable(count_i, count_j, 2, 'main', 'banker')) {
+        //     addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
+        //     count_j_temp++;
+        // }
+        else {
+            addPointToTable(count_i_hollow, count_j_hollow, stringPoint, stringPlay, 'hollow');
+            count_i_hollow++;
+        }
+
     }
 }
 
@@ -323,9 +330,22 @@ function handleAddPointToCompactTable(previousTd, stringPoint, checkStringPlay, 
         count_j_compact += 1;
         addPointToTable(count_i_compact, count_j_compact, stringPoint, stringPlay, 'compact');
         count_i_compact++;
+        count_j_temp_compact = count_j_compact;
     } else {
-        addPointToTable(count_i_compact, count_j_compact, stringPoint, stringPlay, 'compact');
-        count_i_compact++;
+        if (count_i_compact == 5) {
+            count_i_compact = 5;
+            addPointToTable(count_i_compact, count_j_temp_compact, stringPoint, stringPlay, 'compact');
+            count_j_temp_compact++;
+        }
+        // else if (!checkNextCellTable(count_i, count_j, 2, 'main', 'banker')) {
+        //     addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
+        //     count_j_temp++;
+        // }
+        else {
+            addPointToTable(count_i_compact, count_j_compact, stringPoint, stringPlay, 'compact');
+            count_i_compact++;
+        }
+
     }
 }
 
@@ -395,23 +415,37 @@ function handleAddPointToRainTable(previousTd, stringPoint, checkStringPlay, str
         count_j_rain += 1;
         addPointToRainTable(count_i_rain, count_j_rain, stringPoint, stringPlay);
         count_i_rain++;
+        count_j_temp_rain = count_j_rain;
     } else {
-        addPointToRainTable(count_i_rain, count_j_rain, stringPoint, stringPlay);
-        count_i_rain++;
+        if (count_i_rain == 5) {
+            count_i_rain = 5;
+            addPointToRainTable(count_i_rain, count_j_temp_rain, stringPoint, stringPlay);
+            count_j_temp_rain++;
+        }
+        // else if (!checkNextCellTable(count_i, count_j, 2, 'main', 'banker')) {
+        //     addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
+        //     count_j_temp++;
+        // }
+        else {
+            addPointToRainTable(count_i_rain, count_j_rain, stringPoint, stringPlay);
+            count_i_rain++;
+        }
+
     }
 }
 
 // function check cell in table
 
-function checkNextCellTable(count_i, count_j, plus_count, nameTable, color) {
-
-    let next_i = count_i + plus_count;
-
-    let td = document.querySelector(`#tr${next_i}td${count_j}_${nameTable}`);
-    if (td != null) {
+function checkNextCellTable(count_i, count_j, plus, nameTable, color) {
+    let next_double_i = count_i + plus;
+    let td = document.querySelector(`#tr${next_double_i}td${count_j}_${nameTable}`);
+    if (td != null || count_i == 5) {
+        if (td.classList.contains(color)) {
+            return false;
+        }
 
         return true;
     }
 
-    return false;
+    // return false;
 }
