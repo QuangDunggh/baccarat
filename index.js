@@ -109,6 +109,7 @@ $('#player').on('click', (e) => {
     // console.log($('#player'));
 
     let previous_i = count_i;
+
     if (count_i != 0) {
         previous_i = count_i - 1;
     }
@@ -150,10 +151,30 @@ $('#player').on('click', (e) => {
 $('#tie').on('click', (e) => {
 
     let previous_i = count_i;
-    if (count_i != 0) {
+    let previous_count_j_temp = count_j_temp;
+    console.log(count_i);
+    console.log(count_j);
+    console.log(count_j_temp);
+    if (count_i == 5 && count_j_temp - 1 == count_j) {
+        previous_i = 5;
+        previous_count_j_temp = count_j;
+    } else if (count_i == 5) {
+        if (count_j_temp == count_j) {
+            console.log('vao day 1');
+            previous_i = count_i - 1;
+        } else {
+            console.log('vao day 2');
+            previous_i = 5;
+            previous_count_j_temp = count_j_temp - 1;
+        }
+    } else {
         previous_i = count_i - 1;
     }
+    // console.log(previous_i);
+    // console.log(previous_count_j_temp);
     let previousTd = document.querySelector(`#tr${previous_i}td${count_j}_main`);
+    //handle when dragon
+    let previousTdDragon = document.querySelector(`#tr${previous_i}td${previous_count_j_temp}_main`);
     // Handle hidden table
     if (count_i == 0 && count_j == 0) {
         addPointToTable(count_i, count_j, 'tieHollow', 'tieFirstRow', 'main');
@@ -161,12 +182,22 @@ $('#tie').on('click', (e) => {
     } else if (previousTd.classList.contains('tieFirstRow')) {
         addPointToTable(count_i, count_j, 'tieHollow', 'tieFirstRow', 'main');
         count_i++;
-    } else if (previousTd.classList.contains('banker') || previousTd.classList.contains('tieBanker')) {
-        addPointToTable(previous_i, count_j, 'bankerHollow imgTie', 'tieBanker', 'main');
+    } else if (count_i == 5) {
+        // console.log(previousTdDragon);
+        if (previousTdDragon.classList.contains('banker') || previousTdDragon.classList.contains('tieBanker')) {
+            addPointToTable(previous_i, previous_count_j_temp, 'bankerHollow imgTie', 'tieBanker', 'main');
+            // console.log('vao day chua');
+        } else {
+            addPointToTable(previous_i, previous_count_j_temp, 'playerHollow imgTie', 'tiePlayer', 'main');
 
+        }
     } else {
-        addPointToTable(previous_i, count_j, 'playerHollow imgTie', 'tiePlayer', 'main');
+        if (previousTd.classList.contains('banker') || previousTd.classList.contains('tieBanker')) {
+            addPointToTable(previous_i, count_j, 'bankerHollow imgTie', 'tieBanker', 'main');
+        } else {
+            addPointToTable(previous_i, count_j, 'playerHollow imgTie', 'tiePlayer', 'main');
 
+        }
     }
 });
 
