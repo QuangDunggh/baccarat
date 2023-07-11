@@ -2,6 +2,13 @@ let tbodyDairo = document.querySelector("#tbl-dairo");
 let tbodyCompact = document.querySelector("#tbl-compact");
 let tbodyHollow = document.querySelector("#tbl-hollow");
 let tbodyRain = document.querySelector("#tbl-rain");
+
+let tbodyDairoDisplay = document.querySelector("#tbl-dairo-display");
+let tbodyCompactDisplay = document.querySelector("#tbl-compact-display");
+let tbodyHollowDisplay = document.querySelector("#tbl-hollow-display");
+let tbodyRainDisplay = document.querySelector("#tbl-rain-display");
+
+// count for local table
 let count_i = 0;
 let count_j = 0;
 let count_i_hollow = 0;
@@ -10,11 +17,22 @@ let count_i_compact = 0;
 let count_j_compact = 0;
 let count_i_rain = 0;
 let count_j_rain = 0;
+
+//
+let count_j_temp = 0;
+let count_j_temp_compact = 0;
+let count_j_temp_rain = 0;
+let count_j_temp_hollow = 0;
+
+//
+
 let currentColumnMain = [];
 let previousColumnMain = [];
 let doublePreviousColumnMain = [];
 let triplePreviousColumnMain = [];
 let quadaPreviousColumnMain = [];
+
+let tablePoint = new Array();
 // console.log(tbodyDairo);
 function drawTablePlay(idElement, trQuantity, tdQuantity, nameTable) {
     for (let i = 0; i < trQuantity; i++) {
@@ -31,28 +49,43 @@ function drawTablePlay(idElement, trQuantity, tdQuantity, nameTable) {
     }
 }
 // console.log($('#tbl-dairo'));
-drawTablePlay(tbodyDairo, 12, 120, 'main');
-drawTablePlay(tbodyHollow, 12, 95, 'hollow');
-drawTablePlay(tbodyCompact, 12, 95, 'compact');
-drawTablePlay(tbodyRain, 12, 95, 'rain');
+//draw table hidden
+drawTablePlay(tbodyDairo, 6, 120, 'main');
+drawTablePlay(tbodyHollow, 6, 95, 'hollow');
+drawTablePlay(tbodyCompact, 6, 95, 'compact');
+drawTablePlay(tbodyRain, 6, 95, 'rain');
+
+// draw table display
+
 
 
 $('#banker').on('click', (e) => {
-
-
     let previous_i = count_i;
     if (count_i != 0) {
         previous_i = count_i - 1;
     }
     let previousTd = document.querySelector(`#tr${previous_i}td${count_j}_main`);
+
     if (previousTd.classList.contains('player') || previousTd.classList.contains('tiePlayer')) {
         count_i = 0;
         count_j++;
-        addPointToMainTable(count_i, count_j, 'bankerHollow', 'banker');
+        addPointToTable(count_i, count_j, 'bankerHollow', 'banker', 'main');
         count_i++;
+        count_j_temp = count_j;
     } else {
-        addPointToMainTable(count_i, count_j, 'bankerHollow', 'banker');
-        count_i++;
+        if (count_i == 5) {
+            count_i = 5;
+            addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
+            count_j_temp++;
+        }
+        // else if (!checkNextCellTable(count_i, count_j, 2, 'main', 'banker')) {
+        //     addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
+        //     count_j_temp++;
+        // }
+        else {
+            addPointToTable(count_i, count_j, 'bankerHollow', 'banker', 'main');
+            count_i++;
+        }
     }
 
     if (checkListMain(currentColumnMain, 'player')) {
@@ -60,10 +93,6 @@ $('#banker').on('click', (e) => {
         triplePreviousColumnMain = doublePreviousColumnMain;
         doublePreviousColumnMain = previousColumnMain;
         previousColumnMain = currentColumnMain;
-        console.log('double previous: ');
-        console.log(doublePreviousColumnMain);
-        console.log('previous: ');
-        console.log(previousColumnMain);
         currentColumnMain = [];
         currentColumnMain.push(`banker ${count_i} ${count_j}`);
 
@@ -84,24 +113,28 @@ $('#player').on('click', (e) => {
         previous_i = count_i - 1;
     }
     let previousTd = document.querySelector(`#tr${previous_i}td${count_j}_main`);
+
     if (previousTd.classList.contains('banker') || previousTd.classList.contains('tieBanker')) {
         count_i = 0;
         count_j++;
-        addPointToMainTable(count_i, count_j, 'playerHollow', 'player');
+        addPointToTable(count_i, count_j, 'playerHollow', 'player', 'main');
         count_i++;
+        count_j_temp = count_j;
     } else {
-        addPointToMainTable(count_i, count_j, 'playerHollow', 'player');
-        count_i++;
+        if (count_i == 5) {
+            count_i = 5;
+            addPointToTable(count_i, count_j_temp, 'playerHollow', 'player', 'main');
+            count_j_temp++;
+        } else {
+            addPointToTable(count_i, count_j, 'playerHollow', 'player', 'main');
+            count_i++;
+        }
     }
     if (checkListMain(currentColumnMain, 'banker')) {
         quadaPreviousColumnMain = triplePreviousColumnMain;
         triplePreviousColumnMain = doublePreviousColumnMain;
         doublePreviousColumnMain = previousColumnMain;
         previousColumnMain = currentColumnMain;
-        console.log('double previous: ');
-        console.log(doublePreviousColumnMain);
-        console.log('previous: ');
-        console.log(previousColumnMain);
         currentColumnMain = [];
         currentColumnMain.push(`player ${count_i} ${count_j}`);
     } else {
@@ -115,21 +148,44 @@ $('#player').on('click', (e) => {
 });
 
 $('#tie').on('click', (e) => {
+
     let previous_i = count_i;
     if (count_i != 0) {
         previous_i = count_i - 1;
     }
     let previousTd = document.querySelector(`#tr${previous_i}td${count_j}_main`);
-    if (previousTd.classList.contains('banker') || previousTd.classList.contains('tieBanker')) {
-        addPointToMainTable(count_i, count_j, 'tieHollow', 'tieBanker');
+    // Handle hidden table
+    if (count_i == 0 && count_j == 0) {
+        addPointToTable(count_i, count_j, 'tieHollow', 'tieFirstRow', 'main');
         count_i++;
+    } else if (previousTd.classList.contains('tieFirstRow')) {
+        addPointToTable(count_i, count_j, 'tieHollow', 'tieFirstRow', 'main');
+        count_i++;
+    } else if (previousTd.classList.contains('banker') || previousTd.classList.contains('tieBanker')) {
+        addPointToTable(previous_i, count_j, 'bankerHollow imgTie', 'tieBanker', 'main');
+
     } else {
-        addPointToMainTable(count_i, count_j, 'tieHollow', 'tiePlayer');
-        count_i++;
+        addPointToTable(previous_i, count_j, 'playerHollow imgTie', 'tiePlayer', 'main');
+
     }
-
-
 });
+
+// Add point to table
+function addPointToTable(count_i, count_j, stringPoint, stringPlay, nameTable) {
+
+    let td = document.querySelector(`#tr${count_i}td${count_j}_${nameTable}`);
+    td.innerHTML = `<div class="pointTiny">
+                <span class="dotTiny ${stringPoint}"></span>
+                </div>`;
+    td.classList.add(stringPlay);
+    td.style.padding = 0;
+
+}
+
+
+
+// handle main table 
+
 
 // HOLLOW
 function handleHollowTable(count_i, count_j) {
@@ -182,35 +238,28 @@ function handleHollowTable(count_i, count_j) {
 
 }
 
-function addPointToMainTable(count_i, count_j, stringPoint, stringPlay) {
-    let td = document.querySelector(`#tr${count_i}td${count_j}_main`);
-    td.innerHTML = `<div class="pointTiny">
-                <span class="dotTiny ${stringPoint}"></span>
-                </div>`;
-    td.classList.add(stringPlay);
-    td.style.padding = 0;
-
-}
-
-function addPointToHollowTable(count_i_hollow, count_j_hollow, stringPoint, stringPlay) {
-    let td = document.querySelector(`#tr${count_i_hollow}td${count_j_hollow}_hollow`);
-    td.innerHTML = `<div class="pointTiny">
-                    <span class="dotTiny ${stringPoint}"></span>
-                    </div>`;
-    td.classList.add(stringPlay);
-    td.style.padding = 0;
-
-}
-
 function handleAddPointToHollowTable(previousTd, stringPoint, checkStringPlay, stringPlay) {
     if (previousTd.classList.contains(checkStringPlay)) {
         count_i_hollow = 0;
         count_j_hollow += 1;
-        addPointToHollowTable(count_i_hollow, count_j_hollow, stringPoint, stringPlay);
+        addPointToTable(count_i_hollow, count_j_hollow, stringPoint, stringPlay, 'hollow');
         count_i_hollow++;
+        count_j_temp_hollow = count_j_hollow;
     } else {
-        addPointToHollowTable(count_i_hollow, count_j_hollow, stringPoint, stringPlay);
-        count_i_hollow++;
+        if (count_i_hollow == 5) {
+            count_i_hollow = 5;
+            addPointToTable(count_i_hollow, count_j_temp_hollow, stringPoint, stringPlay, 'hollow');
+            count_j_temp_hollow++;
+        }
+        // else if (!checkNextCellTable(count_i, count_j, 2, 'main', 'banker')) {
+        //     addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
+        //     count_j_temp++;
+        // }
+        else {
+            addPointToTable(count_i_hollow, count_j_hollow, stringPoint, stringPlay, 'hollow');
+            count_i_hollow++;
+        }
+
     }
 }
 
@@ -276,25 +325,29 @@ function handleCompactTable(count_i, count_j) {
 
 }
 
-function addPointToCompactTable(count_i_compact, count_j_compact, stringPoint, stringPlay) {
-    let td = document.querySelector(`#tr${count_i_compact}td${count_j_compact}_compact`);
-    td.innerHTML = `<div class="pointTiny">
-                    <span class="dotTiny ${stringPoint}"></span>
-                    </div>`;
-    td.classList.add(stringPlay);
-    td.style.padding = 0;
-
-}
 
 function handleAddPointToCompactTable(previousTd, stringPoint, checkStringPlay, stringPlay) {
     if (previousTd.classList.contains(checkStringPlay)) {
         count_i_compact = 0;
         count_j_compact += 1;
-        addPointToCompactTable(count_i_compact, count_j_compact, stringPoint, stringPlay);
+        addPointToTable(count_i_compact, count_j_compact, stringPoint, stringPlay, 'compact');
         count_i_compact++;
+        count_j_temp_compact = count_j_compact;
     } else {
-        addPointToCompactTable(count_i_compact, count_j_compact, stringPoint, stringPlay);
-        count_i_compact++;
+        if (count_i_compact == 5) {
+            count_i_compact = 5;
+            addPointToTable(count_i_compact, count_j_temp_compact, stringPoint, stringPlay, 'compact');
+            count_j_temp_compact++;
+        }
+        // else if (!checkNextCellTable(count_i, count_j, 2, 'main', 'banker')) {
+        //     addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
+        //     count_j_temp++;
+        // }
+        else {
+            addPointToTable(count_i_compact, count_j_compact, stringPoint, stringPlay, 'compact');
+            count_i_compact++;
+        }
+
     }
 }
 
@@ -364,8 +417,37 @@ function handleAddPointToRainTable(previousTd, stringPoint, checkStringPlay, str
         count_j_rain += 1;
         addPointToRainTable(count_i_rain, count_j_rain, stringPoint, stringPlay);
         count_i_rain++;
+        count_j_temp_rain = count_j_rain;
     } else {
-        addPointToRainTable(count_i_rain, count_j_rain, stringPoint, stringPlay);
-        count_i_rain++;
+        if (count_i_rain == 5) {
+            count_i_rain = 5;
+            addPointToRainTable(count_i_rain, count_j_temp_rain, stringPoint, stringPlay);
+            count_j_temp_rain++;
+        }
+        // else if (!checkNextCellTable(count_i, count_j, 2, 'main', 'banker')) {
+        //     addPointToTable(count_i, count_j_temp, 'bankerHollow', 'banker', 'main');
+        //     count_j_temp++;
+        // }
+        else {
+            addPointToRainTable(count_i_rain, count_j_rain, stringPoint, stringPlay);
+            count_i_rain++;
+        }
+
     }
+}
+
+// function check cell in table
+
+function checkNextCellTable(count_i, count_j, plus, nameTable, color) {
+    let next_double_i = count_i + plus;
+    let td = document.querySelector(`#tr${next_double_i}td${count_j}_${nameTable}`);
+    if (td != null || count_i == 5) {
+        if (td.classList.contains(color)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // return false;
 }

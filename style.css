@@ -53,6 +53,12 @@ td {
     border-color: blue;
 }
 
+.imgTie {
+    background-image: url('dung.png');
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
 .tieHollow {
     background-color: white;
     border-color: green;
